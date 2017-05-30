@@ -1,38 +1,38 @@
 ﻿using System;
 using System.Threading;
+using ZooConsole.Animals.Settings;
+using ZooConsole.ZooManagement;
 
 namespace ZooConsole
 {
-    class ZooConsoleApp
+    internal class ZooConsoleApp
     {
-        static Zoo zoo;
-        static TimerCallback tm;
-        static Timer timer;
+        private static Zoo _zoo;
+        private static Timer _timer;
 
         static void Main(string[] args)
         {
-            int eventInterval = 5000;
+            var eventInterval = 5000;
 
             Console.Title = "Zoo";
             Console.WriteLine("<-------- You are in the console emulator of life in a zoo. --------> ");
             Console.WriteLine("The zoo already has animals: by one for each available species.");
             Console.WriteLine("With a constant period of time (every 5 seconds) events occurs in the zoo.");
             
-            zoo = new Zoo();
-            Menu menu = new Menu();
+            _zoo = new Zoo();
+            var menu = new Menu();
 
             // Animals added by default
-            zoo.Add("Baako", Species.Bear);
-            zoo.Add("Eamon", Species.Elephant);
-            zoo.Add("Fabio", Species.Fox);
-            zoo.Add("Lacey", Species.Lion);
-            zoo.Add("Tad", Species.Tiger);
-            zoo.Add("Walcott", Species.Wolf);
+            _zoo.Add("Baako", Species.Bear);
+            _zoo.Add("Eamon", Species.Elephant);
+            _zoo.Add("Fabio", Species.Fox);
+            _zoo.Add("Lacey", Species.Lion);
+            _zoo.Add("Tad", Species.Tiger);
+            _zoo.Add("Walcott", Species.Wolf);
 
-            tm = new TimerCallback(Event);
-            timer = new Timer(tm, null, 0, eventInterval);
+            _timer = new Timer(Event, null, 0, eventInterval);
 
-            menu.MenuChoise(zoo);
+            menu.MenuChoise(_zoo);
             Console.WriteLine("<-------- The program finished its work. --------> ");
             Console.WriteLine("Press any key to exit.");
             Console.ReadKey();
@@ -40,7 +40,7 @@ namespace ZooConsole
 
         public static void Event(object obj)
         {
-            var animal = zoo.GetRndActive();
+            var animal = _zoo.GetRndActive();
 
             if (animal != null)
             {
@@ -72,41 +72,39 @@ namespace ZooConsole
             }
             else
             {
-                timer.Dispose();
+                _timer.Dispose();
                 Console.WriteLine("All animals in the zoo are dead!");
             }
         }
 
-        public void DisplayAll()
+        public static void DisplayAll()
         {
-            var animals = zoo.GetAll();
+            var animals = _zoo.GetAll();
 
             Console.WriteLine("The list of all animals in the zoo: ");
 
             foreach (var a in animals)
             {
-                Console.WriteLine($"Nickname: {a.Nickname}, spices: {a.Species}, lives: {a.CurrentLives}, condition: {a.Condition}.");
+                Console.WriteLine($"Nickname: {a.Nickname}, spices: {a.GetType().Name}, lives: {a.CurrentLives}, condition: {a.Condition}.");
             }
         }
 
-        public void DisplayAllActive()
+        public static void DisplayAllActive()
         {
-            var activeAnimals = zoo.GetActive();
+            var activeAnimals = _zoo.GetAllActive();
 
             if (activeAnimals.Capacity != 0)
             {
                 Console.WriteLine("The list of all active animals: ");
                 foreach (var a in activeAnimals)
                 {
-                    Console.WriteLine($"Nickname: {a.Nickname}, spices: {a.Species}, lives: {a.CurrentLives}, condition: {a.Condition}.");
+                    Console.WriteLine($"Nickname: {a.Nickname}, spices: {a.GetType().Name}, lives: {a.CurrentLives}, condition: {a.Condition}.");
                 }
             }
             else
             {
                 Console.WriteLine("The list of all active animals is empty!");
-            }
-            
+            }            
         }
-
     }
 }
